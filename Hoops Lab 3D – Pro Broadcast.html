@@ -1,0 +1,312 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Hoops Lab 3D – Pro Broadcast</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#eef1f6;--fg:#12161f;--card:#fff;--mut:#5b6577;--ac:#e8590c;--bd:#d5dbe6;--cy:#0b7285}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f17;--fg:#e8ecf4;--card:#141b28;--mut:#8a96ad;--ac:#ff8a3d;--bd:#243049;--cy:#3bc9db}}
+:root[data-theme="dark"]{--bg:#0b0f17;--fg:#e8ecf4;--card:#141b28;--mut:#8a96ad;--ac:#ff8a3d;--bd:#243049;--cy:#3bc9db}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Sarabun","Noto Sans Thai",sans-serif}
+header{padding:10px 14px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}h1{margin:0;font-size:18px;letter-spacing:.5px}.mut{color:var(--mut);font-size:12px}
+main{display:grid;grid-template-columns:1fr 390px;gap:12px;padding:0 12px 12px}@media(max-width:900px){main{grid-template-columns:1fr}}
+.cw{position:relative;height:60vh;min-height:320px;border-radius:12px;overflow:hidden;background:#070b12;border:1px solid var(--bd)}
+canvas{width:100%;height:100%;display:block;touch-action:none}
+.note{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(7,11,18,.8);color:#e8ecf4;padding:6px 10px;border-radius:8px;font-size:13px}
+.res{position:absolute;top:12%;left:50%;transform:translateX(-50%) rotate(-4deg);font-weight:900;font-style:italic;font-size:clamp(26px,6vw,52px);color:#ffe066;-webkit-text-stroke:2px #1a0b2e;text-shadow:3px 3px 0 #ff4d6d;white-space:nowrap;pointer-events:none}.pop{animation:pop .5s ease-out}@keyframes pop{0%{transform:translateX(-50%) scale(.2) rotate(-12deg);opacity:0}60%{transform:translateX(-50%) scale(1.25) rotate(-4deg);opacity:1}100%{transform:translateX(-50%) scale(1) rotate(-4deg)}}#sl2{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:repeating-conic-gradient(from 0deg,transparent 0 5deg,rgba(255,255,255,.55) 5deg 5.6deg);-webkit-mask:radial-gradient(circle,transparent 42%,#000 95%);mask:radial-gradient(circle,transparent 42%,#000 95%)}
+.bar,.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+button,select,input[type=range]{font:inherit}button,select{background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.on{background:var(--ac);color:#fff;border-color:var(--ac)}.panel{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;align-self:start}
+.tabs{display:flex;gap:4px;margin:10px 0}.tabs button{flex:1;font-size:12px}
+.st{padding:5px 8px;border-left:3px solid var(--bd);margin:4px 0}.st.cur{border-color:var(--ac);background:rgba(255,138,61,.12)}
+.tag{background:var(--cy);color:#fff;border-radius:6px;padding:0 6px;font-size:11px}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}.kpi div{background:var(--bg);border-radius:8px;padding:6px;text-align:center;font-size:11px;color:var(--mut)}.kpi b{display:block;font-size:16px;color:var(--fg)}
+.br{height:10px;border-radius:5px;background:var(--bg);overflow:hidden;margin:2px 0 8px}.br i{display:block;height:100%;background:var(--ac)}
+textarea{width:100%;height:110px;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:8px;font:11px monospace}
+.cw{background:#05070d}.cw::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(0,0,0,.55))}
+#bug{position:absolute;top:10px;left:10px;display:flex;align-items:stretch;background:rgba(8,12,22,.88);border-radius:4px;overflow:hidden;font:700 14px/1 system-ui;color:#fff;z-index:2}
+.tm{padding:8px 10px;border-left:4px solid #1d4ed8;display:flex;gap:8px;align-items:center}.tm.d{border-color:#c8102e}.tm span{font-size:18px}.ck{padding:8px 10px;background:#111a30;display:flex;gap:8px;align-items:center}.sck{color:#ffb703;font-variant-numeric:tabular-nums}
+#live{position:absolute;top:10px;right:10px;background:rgba(200,16,46,.9);color:#fff;font:700 11px/1 system-ui;padding:6px 10px;border-radius:3px;z-index:2}
+.note{left:0;right:auto;bottom:14px;max-width:92%;border-radius:0 4px 4px 0;background:linear-gradient(90deg,#c8102e,#0b1f4b);border-left:6px solid #ffb703;font-weight:600;z-index:2}
+.res{top:16%;font-style:normal;-webkit-text-stroke:0;text-shadow:0 3px 12px #000;color:#fff;background:linear-gradient(90deg,#1d4ed8,#c8102e);padding:6px 22px;border-radius:4px;font-size:clamp(20px,4vw,34px);z-index:2}.res:empty{display:none}.res.pop{animation:pop2 .4s ease-out}@keyframes pop2{0%{transform:translateX(-50%) scale(.6);opacity:0}100%{transform:translateX(-50%) scale(1);opacity:1}}
+</style></head><body>
+<header><h1>🏀 HOOPS LAB 3D</h1><span class="mut">90 แผนโจมตี (รวม 60 Off-ball) · 30 แผนป้องกัน · NBA / FIBA · มุมกล้องบรอดแคสต์</span></header>
+<main><section><div class="cw"><canvas id="c"></canvas><div id="bug"><div class="tm"><b>OFF</b><span id="s0">0</span></div><div class="tm d"><b>DEF</b><span id="s1">0</span></div><div class="ck"><span>Q1</span> <span id="gc">8:00</span> <span class="sck" id="shc">24.0</span></div></div><div id="live">● LIVE · HOOPS LAB</div><div class="res" id="res"></div><div class="note" id="note"></div></div>
+<div class="bar"><button id="pp" class="on">⏸ หยุด</button><button id="rs">⟲ รีเซ็ต</button><button id="rnd">🎲 สุ่มสถานการณ์</button>
+<select id="sp"><option value=".5">0.5x</option><option value="1" selected>1x</option><option value="2">2x</option></select>
+<button id="ht">🔥 แผนที่ช่องว่าง</button><button data-cam="p">📺 บรอดแคสต์</button><button data-cam="c">🎬 ตามบอล</button><button data-cam="t">มุมบน</button><button data-cam="s">มุมฝั่งรุก</button><button data-cam="b">หลังแป้น</button></div>
+<input id="sl" type="range" min="0" max="100" value="0" style="width:100%;margin-top:8px"></section>
+<aside class="panel"><div class="row"><select id="lg"><option>NBA</option><option>FIBA</option></select><select id="pl" style="flex:1;min-width:0"></select>
+<select id="df" style="flex:1"></select></div>
+<div id="bs" class="mut" style="margin-top:6px"></div><div id="dn" class="mut" style="margin-top:8px"></div><div class="tabs"><button data-t="ball" class="on">1 บอล</button><button data-t="pos">2 ตำแหน่ง</button><button data-t="eff">3 ประสิทธิภาพ</button><button data-t="def">4 แผนรับ↔รุก</button></div>
+<div id="tab"></div>
+<details style="margin-top:10px"><summary>📄 นำเข้าข้อมูลจาก Google Sheets</summary>
+<p class="mut">ชีต: id,league,name,kind,step,ball,x1,z1…x5,z5,note — ใน Sheets เลือก ไฟล์ › ดาวน์โหลด › CSV แล้ววางหรืออัปโหลด (หน้าที่เผยแพร่ดึงชีตสดตรง ๆ ไม่ได้)</p>
+<textarea id="csv"></textarea><div class="row"><input type="file" id="fi" accept=".csv,text/csv"><button id="ld">โหลดข้อมูล</button></div></details></aside></main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=i=>document.getElementById(i),HX=1.575,ARC={NBA:[7.24,6.7],FIBA:[6.75,6.6]},POS=['PG','SG','SF','PF','C'];
+const ROLE=['ควบคุมจังหวะ อ่านดีเฟนส์ เล่นปิ๊กแอนด์โรลและจ่ายบอล','ชู้ตเตอร์ ใช้สกรีนไม่มีบอลเพื่อรับแล้วยิงเร็ว','วิงสองทาง ไดรฟ์ คัต และยิงสามแต้มมุม','พาวเวอร์ ตั้งสกรีน ป๊อปยิงกลาง และรีบาวน์','เซ็นเตอร์ ตั้งสกรีน โรลลงแป้น จบใต้ห่วง'];
+const TN={pnr:'พิกแอนด์โรล',scr:'สกรีนไม่มีบอล',cut:'คัต/แบ็กดอร์',iso:'ไอโซ/ไดรฟ์',pst:'เล่นโพสต์',spt:'ยิงสปอตอัพ',dho:'แฮนด์ออฟ',mot:'โมชั่น/สวิงบอล'};
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v)),sm=t=>t*t*(3-2*t),LB={B:'NBA+FIBA',N:'NBA',F:'FIBA'};
+const SP={T:[9.5,0,'ท็อป'],WL:[8,-5.6,'ปีกซ้าย'],WR:[8,5.6,'ปีกขวา'],SL:[8.8,-2.7,'สล็อตซ้าย'],SR:[8.8,2.7,'สล็อตขวา'],CL:[1.5,-6.9,'มุมซ้าย'],CR:[1.5,6.9,'มุมขวา'],EL:[5.8,-2.5,'เอลโบว์ซ้าย'],ER:[5.8,2.5,'เอลโบว์ขวา'],HP:[5.8,0,'โพสต์สูง'],BL:[2.8,-2.5,'บล็อกซ้าย'],BR:[2.8,2.5,'บล็อกขวา'],R:[3,0,'ใต้แป้น'],ML:[5,-5.4,'กลางซ้าย'],MR:[5,5.4,'กลางขวา'],DL:[1.9,-1.6,'เลย์อัพซ้าย'],DR:[1.9,1.6,'เลย์อัพขวา'],AL:[7.6,-4.4,'ปีกสูงซ้าย'],AR:[7.6,4.4,'ปีกสูงขวา'],UL:[7.4,-2.2,'ฟรีโธรซ้าย'],UR:[7.4,2.2,'ฟรีโธรขวา'],LL:[4.4,-4.6,'ต่ำซ้าย'],LR:[4.4,4.6,'ต่ำขวา'],KL:[6.2,-4.4,'ข้างซ้าย'],KR:[6.2,4.4,'ข้างขวา'],BM:[1.9,0,'เบสไลน์']};
+const CSV_TAGS={PR:'pnr,cut',H:'scr,cut',PD:'scr,spt',DK:'iso,spt',ISO:'iso'};
+const CSV=`id,league,name,kind,step,ball,x1,z1,x2,z2,x3,z3,x4,z4,x5,z5,note
+PR,BOTH,Pick & Roll 1-5,ไม่มีบอล (C โรลจบเกม),0,1,9,0,7,-6,7,6,5,-4.5,6.5,2,PG ถือบอลที่ท็อป C เข้าตั้งสกรีน
+PR,BOTH,Pick & Roll 1-5,ไม่มีบอล (C โรลจบเกม),1,1,8.2,1.2,7,-6,7,6,5,-4.5,7.6,1,C ตั้งสกรีนข้างบอล PG เลี้ยวขวาชิดสกรีน
+PR,BOTH,Pick & Roll 1-5,ไม่มีบอล (C โรลจบเกม),2,1,6,3.2,6.6,-6,7.2,6.2,4.8,-5,5.2,0.6,PG ผ่านสกรีน C โรลลงแป้น ดึงดีเฟนส์สองคน
+PR,BOTH,Pick & Roll 1-5,ไม่มีบอล (C โรลจบเกม),3,5,6,3.2,6.6,-6,7.2,6.2,4.8,-5,3.2,0.4,PG ส่งบอลให้ C ใต้แป้น จบเลย์อัพ
+H,BOTH,Horns Curl,ไม่มีบอล (PG เคิร์ลจบเกม),0,1,9,0,3.5,-6.9,3.5,6.9,7.5,-2.6,7.5,2.6,ตั้งฮอร์น PG ถือบอลที่ท็อป PF กับ C ยืนสองข้างฟรีโธร
+H,BOTH,Horns Curl,ไม่มีบอล (PG เคิร์ลจบเกม),1,4,8,1,3.5,-6.9,3.5,6.9,7.5,-2.6,7.5,2.6,PG ส่งให้ PF แล้วคัตเข้าหาสกรีนของ C
+H,BOTH,Horns Curl,ไม่มีบอล (PG เคิร์ลจบเกม),2,4,5.4,3.6,3.5,-6.9,3.5,6.9,7.5,-2.6,7.6,2.6,PG เคิร์ลรอบสกรีนพุ่งเข้าหาแป้น
+H,BOTH,Horns Curl,ไม่มีบอล (PG เคิร์ลจบเกม),3,1,3.4,1.4,3.5,-6.9,3.5,6.9,7.5,-2.6,7.6,2.6,PF ส่งคืน PG ใต้แป้น จบเลย์อัพ
+PD,NBA,Pin-down Flare,ไม่มีบอล (SG ยิงสามแต้ม),0,1,9.5,0,2.5,-5.5,3.5,6.9,6.5,4.5,4.8,-4.2,SG ซุ่มใต้แป้น C เตรียมตั้ง pin-down
+PD,NBA,Pin-down Flare,ไม่มีบอล (SG ยิงสามแต้ม),1,1,9.5,0.3,3.8,-5,3.5,6.9,6.5,4.5,4.8,-4.2,SG ชิดสกรีนของ C ผู้ป้องกันถูกขวาง
+PD,NBA,Pin-down Flare,ไม่มีบอล (SG ยิงสามแต้ม),2,1,9.5,0.3,7.4,-6.4,3.5,6.9,6.5,4.5,4.8,-4.2,SG เฟลร์ออกปีกปลดตัวเปิด
+PD,NBA,Pin-down Flare,ไม่มีบอล (SG ยิงสามแต้ม),3,2,9.5,0.3,7.6,-6.3,3.5,6.9,6.5,4.5,4.8,-4.2,PG ส่งให้ SG ยิงสามแต้มทันทีหลังรับ
+DK,FIBA,Drive & Kick,มีบอล→ไม่มีบอล (ไดรฟ์แล้วจ่ายมุม),0,1,8.5,-4,8,5.5,1.5,6.9,4.5,-5.5,5,1.5,PG ถือบอลปีก SF รออยู่มุม
+DK,FIBA,Drive & Kick,มีบอล→ไม่มีบอล (ไดรฟ์แล้วจ่ายมุม),1,1,6,-2.5,8,5.5,1.5,6.9,4.5,-5.5,5,1.5,ไดรฟ์เข้าเลน ดึงดีเฟนส์มาช่วย
+DK,FIBA,Drive & Kick,มีบอล→ไม่มีบอล (ไดรฟ์แล้วจ่ายมุม),2,1,4.2,-0.8,8,5.5,1.5,6.9,4.5,-5.5,4.8,1.2,พุ่งถึงโซนฟรีโธรดึงสองคนเข้าหา
+DK,FIBA,Drive & Kick,มีบอล→ไม่มีบอล (ไดรฟ์แล้วจ่ายมุม),3,3,4.2,-0.8,8,5.5,1.5,6.9,4.5,-5.5,4.8,1.2,คิกบอลออกมุมให้ SF ยิงสามแต้ม
+ISO,NBA,High Iso,มีบอล (PG จบเอง),0,1,9,-4,3,-6.9,3,6.9,6.5,6,4.5,5.5,เคลียร์เอาต์ให้ PG เล่นหนึ่งต่อหนึ่ง
+ISO,NBA,High Iso,มีบอล (PG จบเอง),1,1,7.6,-2.4,3,-6.9,3,6.9,6.5,6,4.5,5.5,PG ไดรฟ์ซ้ายหาจังหวะ
+ISO,NBA,High Iso,มีบอล (PG จบเอง),2,1,6.8,-0.6,3,-6.9,3,6.9,6.5,6,4.5,5.5,เบรกจังหวะแล้วดึงยิงระยะกลาง`;
+const PL=`Spain PnR|B|ไม่มีบอล (C โรลหลังสกรีนซ้อน)|pnr,scr,cut|T,WL,CR,ER,HP|1/1 5=UL/1 1=EL 5=R 4=HP/5
+Pick & Pop|B|ไม่มีบอล (Big ป๊อป 3 แต้ม)|pnr,spt|T,CL,CR,WR,HP|1/1 5=UL/1 1=SL/5 5=AL
+DHO Chicago|B|มีบอล (แฮนด์ออฟแล้วไดรฟ์)|dho,iso|WL,T,CR,CL,ER|2/1 1=SL/1 1=EL 2=WL/1 1=DL
+Horns Flare|B|ไม่มีบอล (SG ฟลาร์ 3 แต้ม)|scr,spt|T,CL,CR,EL,ER|1/1 2=BL/1 2=ML/2 2=WL
+Floppy|N|ไม่มีบอล (ชู้ตเตอร์ผ่านสกรีนคู่)|scr,cut|T,CL,CR,BL,BR|1/1 2=BL 3=BR/1 2=EL 3=ER/2
+UCLA Cut|B|ไม่มีบอล (PG คัตหลังจ่าย)|cut,pst|T,WL,WR,CR,HP|1/5/5 1=DL/1
+Elbow Post Iso|N|มีบอล (Big เล่นโพสต์)|pst,iso|T,CL,CR,WR,EL|1/5/5 5=DL
+Wing Iso 1-4|N|มีบอล (ไอโซปีก)|iso,spt|WL,CL,CR,T,ER|1/1 1=ML/1 1=BL
+Weak-side Pin-down|B|ไม่มีบอล (SG ผ่านพินดาวน์)|scr,spt|T,WL,CR,HP,BR|1/1 5=ER/1 3=AR/3
+Stagger Screen|N|ไม่มีบอล (วิ่งผ่านสกรีนซ้อน)|scr,spt|T,CL,CR,BL,BR|1/1 2=ML/1 2=AL/2 2=WL
+Iverson Cut|F|ไม่มีบอล (คัตข้ามเลน)|cut,scr|T,WL,WR,EL,ER|1/1 2=ML/1 2=EL 4=HP/2 2=R
+Zipper Cut|B|ไม่มีบอล (ซิปเปอร์ขึ้นเอลโบว์)|cut,spt|T,WR,BL,CR,HP|1/1 5=ER/1 3=EL/3
+Dribble Drive Motion|B|มีบอล (ไดรฟ์แล้วเลื่อนที่)|iso,mot,spt|WL,SR,WR,CL,HP|1/1 1=ML/1 1=DL/3
+Pistol Action|N|มีบอล (PnR เร็ว)|pnr,dho|T,WL,CR,WR,SL|1/1 5=UL/1 1=EL 5=HP/1 1=DR
+5-Out Swing|F|ไม่มีบอล (สวิงบอลหาสามแต้ม)|mot,spt|T,WL,WR,CL,CR|1/2/4/4
+Chin Action|F|ไม่มีบอล (Big แฮนด์ออฟเอลโบว์)|dho,pst|T,WL,CR,WR,EL|1/5/5 5=DL
+Zoom DHO|N|มีบอล (DHO ความเร็ว)|dho,spt|WL,T,CR,CL,SL|2/1 1=SL/1 1=UL
+Triple Pinch|B|ไม่มีบอล (คัตใต้แป้นรอบโพสต์)|pst,cut|T,CL,CR,ER,HP|1/5/5 2=BL/2 2=DL
+Box Lob|F|ไม่มีบอล (อัลเลย์อูป)|cut,pst|T,BL,BR,EL,ER|1/1 5=HP/1 5=R/5
+BLOB Stagger|N|ไม่มีบอล (จบสามแต้มจากชู้ต)|scr,spt|T,CL,CR,BL,BR|1/1 3=BR/1 3=ER/1 3=AR/3
+Princeton Backdoor|B|ไม่มีบอล (คัตหลังประตู)|cut,mot|T,WL,WR,CL,HP|1/5/5 3=DR/3
+Weave 3-Man|B|มีบอล (ถักทอแฮนด์ออฟ)|dho,mot|WL,T,WR,CL,CR|2/2 3=SR 2=T/3 3=UR/3 3=DR
+Horns Twist|B|ไม่มีบอล (ผ่านสกรีนแล้วฟลาร์)|scr,cut|T,CL,CR,EL,ER|1/1 3=BR 2=BL/1 3=AR/3
+Elevator Screen|N|ไม่มีบอล (ประตูสกรีน)|scr,spt|T,CL,WR,BL,BR|1/1 2=ML/1 2=AL/2
+Early Drag|B|มีบอล (ดราก PnR ต้นเกม)|pnr,iso|T,WL,WR,CL,SR|1/1 4=SL/1 1=EL 4=HP/1 1=DL`;
+const DF=`ประกบแน่น|B|*.6|cut,scr,mot|กดดันหนัก เสี่ยงโดนคัตและสกรีน
+Man มาตรฐาน|B|*1.1|pnr,dho|สมดุล แต่โดนสกรีนต่อเนื่องได้
+Man ถอยหลวม (Sag)|B|*2|spt,dho|กันไดรฟ์ ยอมให้ยิงไกล
+Deny ปีก|B|M.8,M.5,M.5,M1.4,M1.4|cut,pst|ปิดเส้นจ่าย แต่โดนแบ็กดอร์
+Switch ทุกสกรีน|B|*1|pst,iso|โดนเล่นมิสแมตช์
+Drop Coverage|B|M1,M1,M1,M1,R|spt,dho|C ถอยลึก ยิงกลาง/สามเปิด
+Hedge & Recover|N|M1,M1,M1,M1,HP|cut,pst|C ออกสูง ช่องโรลเปิด
+Ice (ผลักเข้าข้าง)|B|M.8,M.8,M1.2,M1.2,BL|spt,iso|ผลักบอลเข้าเส้นข้าง
+Pack Line|B|*1.8|spt,iso|กันไดรฟ์ ยิงนอกเปิด
+Gap Help|B|M.9,M1.6,M1.6,M1.6,M1.6|dho,spt|ช่วยเร็วแต่เปิดมุม
+ประกบดาวเด่น|F|M.3,M1.2,M1.2,M1.2,M1.2|pnr,dho|คนอื่นเสียสมดุล
+Front Post|B|M1,M1,M1,M1,M.2|spt,mot|ปิดโพสต์ โดนโลบ/ยิงนอก
+โซน 2-3|B|UL,UR,LL,R,LR|spt,dho|มุมและเอลโบว์เปิด
+โซน 3-2|B|AL,T,AR,BL,BR|pst,cut|ใต้แป้นบาง
+โซน 1-3-1|B|T,KL,HP,KR,BM|spt,cut|มุมเบสไลน์เปิด
+โซน 2-1-2|B|UL,UR,HP,BL,BR|spt|ปีกสามแต้มเปิด
+โซน 1-2-2|B|T,KL,KR,BL,BR|spt,pst|เอลโบว์และมุมเปิด
+Extended 2-3|F|AL,AR,LL,R,LR|pnr,cut|กดสูง ช่องกลางว่าง
+Match-up Zone|B|M1,M1,LL,R,LR|spt,pnr|สับสนเมื่อมีสกรีน
+Zone Trap มุม|N|UL,UR,ML,MR,R|pnr,cut|ทรัปแล้วเปิดสกิป
+Box-and-1|B|M.4,BL,BR,EL,ER|spt,pnr|เปิดสามแต้มปีก
+Triangle-and-2|F|M.4,M.4,R,EL,ER|spt,pst|โดนสวิงบอล
+Diamond-and-1|B|M.4,UL,UR,R,HP|spt,cut|มุมและเบสไลน์ว่าง
+Wall เอลโบว์|N|M1.2,M1.2,EL,ER,R|spt,mot|ปิดกลาง ปีกว่าง
+Nail Help|B|M1.2,M1.2,M1.2,M1.2,BM|spt,mot|ช่วยกลางเลน ปีกเปิด
+Tag/Rotate Help|B|*1.3|spt,dho|หมุนช่วยช้า โดนสวิงบอล
+Overload ฝั่งบอล|F|KL,UL,LL,R,BL|mot,spt|ฝั่งตรงข้ามว่าง
+Blitz/Trap PnR|B|M.6,M1.2,M1.2,M1.2,UL|cut,spt|โรล 4-on-3
+Peel Switch|N|M.7,M.9,M1.3,M1.3,M1.3|iso,pst|ช่วยไดรฟ์แต่เสียระยะ
+Zone Press Retreat|F|T,AL,AR,R,HP|pnr,spt|ถอยโซนช้า`;
+let DB=[],S={T:0,play:true,sp:1,lg:'NBA',tab:'ball',sel:1,df:'0',rnd:[.5,.5,.5,.5,.5],D:null,made:null,ci:-1,fx:0,sh:0,tr:1};
+const MID=[.5,.5,.5,.5,.5],DEFS=DF.split('\n').map(l=>{const[n,lg,a,b,note]=l.split('|');return{name:n,lg,a:a[0]==='*'?Array(5).fill('M'+a.slice(1)):a.split(','),beats:b.split(','),note}});
+function parse(t){const m={};t.trim().split(/\r?\n/).forEach(l=>{const r=l.split(',');if(r.length<17||isNaN(+r[4]))return;const o=m[r[0]]||(m[r[0]]={id:r[0],lg:r[1][0]==='B'?'B':r[1][0]==='N'?'N':'F',name:r[2],kind:r[3],tags:(CSV_TAGS[r[0]]||'mot').split(','),steps:[]});const n=r.slice(6,16).map(Number);o.steps[+r[4]]={ball:+r[5],pos:[0,1,2,3,4].map(i=>[n[2*i],n[2*i+1]]),note:r.slice(16).join(' ')}});return Object.values(m).filter(p=>p.steps.length>1&&p.steps.every(Boolean))}
+function gen(s,i){const[n,lg,kind,tg,f,st]=s.split('|');let ps=f.split(',').map(k=>SP[k]);return{id:'G'+i,lg,name:n,kind,tags:tg.split(','),steps:st.split('/').map(q=>{const t=q.split(' '),mv=t.slice(1);ps=ps.slice();mv.forEach(m=>{const[a,b]=m.split('=');ps[a-1]=SP[b]});return{ball:+t[0],pos:ps.slice(),note:POS[t[0]-1]+' ถือบอล'+mv.map(m=>{const[a,b]=m.split('=');return' · '+POS[a-1]+'→'+SP[b][2]}).join('')}})}}
+const OB=`V-Cut หลุดปีก|B|ไม่มีบอล (V-cut รับสามแต้ม)|cut,spt|T,ML,WR,CL,HP|1/1 2=LL/1 2=WL/2
+Backdoor Cut|B|ไม่มีบอล (คัตหลังผู้ป้องกัน)|cut|T,WL,WR,CL,HP|1/1 2=ML/1 2=DL/2
+Flash Cut โพสต์สูง|B|ไม่มีบอล (แฟลชรับกลางเลน)|cut,pst|T,WL,WR,CL,BL|1/1 5=EL/5 5=HP/5 5=R
+Slip Screen ลื่นเข้าแป้น|B|ไม่มีบอล (สกรีนแล้วสลิป)|scr,cut|T,WL,WR,EL,ER|1/1 4=SL/1 4=UL/4 4=BM
+Down Screen ขึ้นปีก|B|ไม่มีบอล (ดาวน์สกรีนรับสามแต้ม)|scr,spt|T,CL,CR,BL,BR|1/1 2=ML/1 2=AL/2
+Back Screen คัตเข้าแป้น|B|ไม่มีบอล (แบ็กสกรีนเลย์อัพ)|scr,cut|T,WL,WR,HP,CR|1/1 5=MR/1 3=ER 5=BR/3 3=DR
+Cross Screen ข้ามเลน|N|ไม่มีบอล (ครอสสกรีนเลย์อัพ)|scr,cut|T,CL,WR,BR,BL|1/1 4=BM/1 2=BL 4=R/2 2=DL
+Flare Screen ฟลาร์มุม|B|ไม่มีบอล (ฟลาร์หนีสกรีน)|scr,spt|T,WL,CR,HP,BR|1/1 4=ER/1 3=AR/3
+Pin-down เคิร์ลแป้น|B|ไม่มีบอล (เคิร์ลเลย์อัพ)|scr,cut|T,CL,WR,CR,HP|1/1 5=BL/1 2=EL/2 2=R
+Curl รอบสกรีน|F|ไม่มีบอล (เคิร์ลรอบสกรีน)|scr,cut|T,WL,WR,CL,HP|1/1 2=EL/1 2=DL/2
+Fade Screen ออกมุม|N|ไม่มีบอล (เฟดออกมุม)|scr,spt|T,WL,BR,CL,HP|1/1 5=DR/1 3=CR/3
+Zipper ขึ้นเอลโบว์|B|ไม่มีบอล (ซิปเปอร์แล้วไดรฟ์)|cut,iso|T,WR,BL,CR,HP|1/1 5=ER/1 3=EL/3 3=DL
+Elevator Doors|F|ไม่มีบอล (ประตูลิฟต์ปล่อยชู้ตเตอร์)|scr,spt|T,CL,CR,BL,BR|1/1 2=ML 3=MR/1 2=AL 3=AR/2
+Stagger Screen คู่|N|ไม่มีบอล (วิ่งผ่านสกรีนสองตัว)|scr,spt|T,CL,CR,BL,HP|1/1 2=ML 5=EL/1 2=AL/2 2=WL
+Wedge Screen ลงเลน|F|ไม่มีบอล (เวดจ์สกรีนเข้าแป้น)|scr,cut|T,WL,WR,EL,ER|1/1 4=HP/1 3=MR 4=ER/3 3=DR
+Split Cut หลังโพสต์|B|ไม่มีบอล (สปลิตคัตรับจากโพสต์)|cut,pst|T,WL,WR,CL,HP|1/5/5 2=EL/2 2=DL
+UCLA Cut แปรผัน|B|ไม่มีบอล (UCLA แล้วเล่นต่อ)|cut,pst|T,WL,WR,CR,HP|1/5/5 1=BL/1 1=DL
+Iverson Cut ข้ามเลน|F|ไม่มีบอล (Iverson cut)|cut,scr|T,CL,WR,EL,ER|1/1 2=BL/1 2=EL 5=HP/2 2=R
+Rip Screen ปีก|N|ไม่มีบอล (ริปสกรีนยิงสามแต้ม)|scr,spt|T,WL,WR,CL,BR|1/1 5=ER/1 3=AR 5=MR/3
+Rub Cut รอบโพสต์|B|ไม่มีบอล (รับจากโพสต์เลย์อัพ)|cut,pst|T,WL,CR,BL,HP|1/5/5 2=ML/5 2=EL/2 2=DL
+Dunker Spot|B|ไม่มีบอล (ซุ่มเบสไลน์รอจบ)|cut,pst|T,WL,WR,CL,HP|1/1 5=BL/1 1=UL 5=BM/5
+Corner Lift|F|ไม่มีบอล (ยกจากมุมขึ้นปีก)|spt,mot|T,SL,CR,CL,HP|1/1 4=ML/1 4=WL/4
+Baseline Drift|B|ไม่มีบอล (ลอยตามเบสไลน์เข้ามุม)|spt,mot|T,WL,BR,CL,HP|1/1 3=DR/1 3=CR/3
+Weak-side Lift|N|ไม่มีบอล (ยกฝั่งอ่อนรับสวิง)|spt,mot|T,WL,CR,CL,HP|1/1 3=BR/1 3=AR/3
+Skip Relocation|B|ไม่มีบอล (ย้ายหลังสกิปพาส)|spt,mot|T,WL,WR,CL,HP|1/2/2 3=AR/3
+Shot-Fake Relocate|F|ไม่มีบอล (ฟลายแล้วย้ายหาช่อง)|iso,mot|T,WL,WR,CL,CR|1/2/2 2=EL/2 2=DL
+Fill-the-Gap|B|ไม่มีบอล (เติมช่องเมื่อเพื่อนไดรฟ์)|mot,spt|T,WL,WR,CL,HP|1/1 1=ML/1 1=DL 3=AR/3
+Drive-Kick Read|B|ไม่มีบอล (อ่านช่องรับคิกบอล)|iso,spt|T,SL,SR,CL,CR|1/1 1=UL/1 1=DL/4
+Pop & Replace|N|ไม่มีบอล (ป๊อปแล้วแทนที่)|pnr,spt|T,WL,WR,CL,HP|1/1 5=UL/1 1=SR 5=AL/5
+Spain Back-Screen ชู้ตเตอร์|B|ไม่มีบอล (แบ็กสกรีนหลังพิกแอนด์โรล)|pnr,scr,spt|T,WL,CR,BR,HP|1/1 5=UL/1 1=EL 4=ER 5=R/1 3=AR/3`;
+const mc=c=>c.length===2&&'LR'.includes(c[1])?c[0]+(c[1]==='L'?'R':'L'):c;
+const OBL=OB.split('\n').flatMap((s,i)=>[0,1].map(m=>{if(m){const q=s.split('|');q[4]=q[4].split(',').map(mc).join(',');q[5]=q[5].replace(/=([A-Z]+)/g,(_,c)=>'='+mc(c));s=q.join('|')}const o=gen(s,i*2+m);o.id='OB'+(i*2+m);o.name+=m?' (ขวา)':' (ซ้าย)';return o}));
+const GEN=PL.split('\n').map(gen).concat(OBL);
+function defT(d,off,b,rn,bi){return d.a.map((t,i)=>{if(t[0]==='M'){const o=off[i],dx=HX-o[0],dz=-o[1],l=Math.hypot(dx,dz)||1,g=parseFloat(t.slice(1))*(i===bi?.7:1)+rn[i]*.4;return[o[0]+dx/l*g+(b[0]-o[0])*.05,o[1]+dz/l*g+(b[1]-o[1])*.05]}
+let a=SP[t],x=a[0]+(rn[i]-.5)*.5,z=a[1]+b[1]*.25;if(S.lg==='NBA'&&x<5.8&&Math.abs(z)<2.45)z=(b[1]>=0?1:-1)*2.7;return[x,z]})}
+function shot(p,d,rn,lg){const L=p.steps[p.steps.length-1],s=L.pos[L.ball-1],D=defT(d,L.pos,s,rn,L.ball-1),dd=Math.min(...D.map(q=>Math.hypot(q[0]-s[0],q[1]-s[1]))),dist=Math.hypot(s[0]-HX,s[1]),th=dist>ARC[lg][0]||Math.abs(s[1])>=ARC[lg][1]+.05;
+const pr=cl((th?.36:dist<2.5?.62:.42)+cl((dd-1.2)*.06,-.1,.16),.1,.8),pt=th?3:2;return{p:pr,pt,ep:pr*pt,d:dd,dist,th,sh:L.ball}}
+// ---------- scene (broadcast / NBA2K style)
+const cv=$('c'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true}),sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(34,1,.1,200);
+R.setPixelRatio(Math.min(devicePixelRatio,2));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.15;R.outputEncoding=THREE.sRGBEncoding;sc.background=new THREE.Color(0x05070d);
+const mkT=k=>{const t=new THREE.CanvasTexture(k);t.encoding=THREE.sRGBEncoding;t.anisotropy=8;return t};
+const cvs=(w,h,f)=>{const k=document.createElement('canvas');k.width=w;k.height=h;f(k.getContext('2d'),w,h);return mkT(k)};
+const ST=(c,r)=>new THREE.MeshStandardMaterial({color:c,roughness:r==null?.6:r,metalness:0});
+sc.add(new THREE.HemisphereLight(0xdfe8ff,0x3a2a1a,.6),new THREE.AmbientLight(0xffffff,.25));
+const dl=new THREE.DirectionalLight(0xfff4e0,1.1);dl.position.set(8,22,8);dl.castShadow=true;dl.shadow.mapSize.set(2048,2048);Object.assign(dl.shadow.camera,{left:-14,right:14,top:14,bottom:-14,far:60});dl.shadow.bias=-.0005;dl.target.position.set(6,0,0);sc.add(dl,dl.target);
+[[3,-5],[3,5],[11,-5],[11,5]].forEach(([x,z])=>{const s=new THREE.SpotLight(0xffffff,.5,45,.7,.6);s.position.set(x,16,z);s.target.position.set(x,0,z);sc.add(s,s.target)});
+const CK=60,cc=document.createElement('canvas');cc.width=18*CK;cc.height=19*CK;const cx=cc.getContext('2d'),ctex=mkT(cc);
+function court(){const X=cx,w=cc.width,h=cc.height,px=x=>(x+2)*CK,py=z=>(z+9.5)*CK;
+for(let j=0;j<h/6;j++){X.fillStyle=`hsl(${32+Math.random()*4},${55+Math.random()*8}%,${50+Math.random()*7}%)`;X.fillRect(0,j*6,w,6);X.fillStyle='rgba(60,30,5,.25)';X.fillRect(0,j*6,w,1)}
+X.fillStyle='rgba(20,10,0,.4)';X.fillRect(0,0,w,py(-7.5));X.fillRect(0,py(7.5),w,h);X.fillRect(0,0,px(0),h);X.fillRect(px(14),0,w,h);
+X.fillStyle='#1c3f94';X.fillRect(px(0),py(-2.45),5.8*CK,4.9*CK);X.strokeStyle='#fff';X.lineWidth=4;X.strokeRect(px(0),py(-7.5),14*CK,15*CK);X.strokeRect(px(0),py(-2.45),5.8*CK,4.9*CK);
+X.beginPath();X.arc(px(5.8),py(0),1.8*CK,0,6.3);X.stroke();X.beginPath();X.arc(px(14),py(0),1.8*CK,Math.PI/2,Math.PI*1.5);X.stroke();
+const[r,zc]=ARC[S.lg],a=Math.asin(zc/r);X.beginPath();X.moveTo(px(0),py(-zc));X.lineTo(px(HX+r*Math.cos(a)),py(-zc));X.arc(px(HX),py(0),r*CK,-a,a);X.lineTo(px(0),py(zc));X.stroke();
+X.fillStyle='rgba(255,255,255,.9)';X.font=`bold ${CK*.8}px sans-serif`;X.textAlign='center';X.save();X.translate(px(2.9),py(0));X.rotate(-Math.PI/2);X.fillText('HOOPS LAB',0,CK*.28);X.restore();ctex.needsUpdate=true}
+function arc(){court()}
+const fl=new THREE.Mesh(new THREE.PlaneGeometry(18,19),new THREE.MeshStandardMaterial({map:ctex,roughness:.32,metalness:.05}));fl.rotation.x=-Math.PI/2;fl.position.set(7,0,0);fl.receiveShadow=true;sc.add(fl);
+const dk=new THREE.Mesh(new THREE.PlaneGeometry(120,90),ST(0x0a0d14));dk.rotation.x=-Math.PI/2;dk.position.set(7,-.05,0);sc.add(dk);
+const crowd=cvs(512,128,(x,w,h)=>{x.fillStyle='#10131c';x.fillRect(0,0,w,h);for(let i=0;i<1400;i++){x.fillStyle=`hsl(${Math.random()*360},45%,${25+Math.random()*30}%)`;x.beginPath();x.arc(Math.random()*w,Math.random()*h,2.2,0,7);x.fill()}});
+[[7,-15,0],[7,15,Math.PI],[-9,0,Math.PI/2]].forEach(([x,z,r])=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(50,12),new THREE.MeshBasicMaterial({map:crowd,color:0x999999}));m.position.set(x,6,z);m.rotation.y=r;sc.add(m)});
+const led=cvs(1024,64,(x,w,h)=>{x.fillStyle='#0b1b3a';x.fillRect(0,0,w,h);x.fillStyle='#fff';x.font='bold 34px sans-serif';x.fillText('HOOPS LAB ★ NBA ★ FIBA ★ PRO ANALYTICS ★ HOOPS LAB ★ NBA ★ FIBA',10,44)});
+[[7,-8.8,0,18],[7,8.8,Math.PI,18],[-2.6,0,Math.PI/2,16]].forEach(([x,z,r,w])=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,1),new THREE.MeshBasicMaterial({map:led}));m.position.set(x,.55,z);m.rotation.y=r;sc.add(m)});
+const bb=new THREE.Mesh(new THREE.BoxGeometry(.05,1.05,1.8),new THREE.MeshStandardMaterial({color:0xcfe6ff,transparent:true,opacity:.35,roughness:.1}));bb.position.set(1.2,3.5,0);bb.castShadow=true;sc.add(bb);
+const pole=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,3.6,10),ST(0x2a2f3a,.4));pole.position.set(-.45,1.8,0);sc.add(pole);const arm=new THREE.Mesh(new THREE.BoxGeometry(1.5,.1,.1),ST(0x2a2f3a,.4));arm.position.set(.3,3.5,0);sc.add(arm);
+const rim=new THREE.Mesh(new THREE.TorusGeometry(.23,.02,8,24),ST(0xff5a1f,.4));rim.rotation.x=Math.PI/2;rim.position.set(HX,3.05,0);sc.add(rim);
+const net=new THREE.Mesh(new THREE.CylinderGeometry(.23,.13,.4,12,1,true),new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true,transparent:true,opacity:.7}));net.position.set(HX,2.85,0);sc.add(net);
+const SK=[0xf1c9a5,0x8d5524,0xc68642,0x5c3a21,0xe0ac69,0x3b2417];
+const numT=(n,fg)=>cvs(64,64,x=>{x.fillStyle=fg;x.font='bold 46px sans-serif';x.textAlign='center';x.fillText(n,32,48)});
+function limb(p,x,y,l1,l2,r,mc,sk){const a=new THREE.Group();a.position.set(x,y,0);p.add(a);const u=new THREE.Mesh(new THREE.CylinderGeometry(r,r*.85,l1,10),mc);u.position.y=-l1/2;a.add(u);const b=new THREE.Group();b.position.y=-l1;a.add(b);const f=new THREE.Mesh(new THREE.CylinderGeometry(r*.85,r*.7,l2,10),sk);f.position.y=-l2/2;b.add(f);return{r:a,m:b,b}}
+function mkP(n,pn,jc,fg,i,rc){const g=new THREE.Group(),U=g.userData={id:Math.random()*6,ry:0,ph:0,sm:0},sk=ST(SK[i%6],.55),jm=ST(jc,.7);
+const M=(geo,m,x,y,z,s)=>{const e=new THREE.Mesh(geo,m);e.position.set(x,y,z);if(s)e.scale.set(...s);g.add(e);return e};
+M(new THREE.CylinderGeometry(.27,.22,.62,16),jm,0,1.42,0,[1,1,.62]);M(new THREE.CylinderGeometry(.23,.27,.38,16),jm,0,1.02,0,[1,1,.65]);M(new THREE.CylinderGeometry(.07,.08,.12,10),sk,0,1.76,0);M(new THREE.SphereGeometry(.115,16,12),sk,0,1.88,0,[.95,1.2,1]);
+const hm=ST(0x15100c,.8);if(i%3===0)M(new THREE.SphereGeometry(.12,16,8,0,6.3,0,1.5),hm,0,1.9,0);if(i%3===1)M(new THREE.SphereGeometry(.15,12,10),hm,0,1.93,0);
+const nt=numT(n,fg),pm=new THREE.MeshBasicMaterial({map:nt,transparent:true});const f=M(new THREE.PlaneGeometry(.26,.26),pm,0,1.44,.185),bk=M(new THREE.PlaneGeometry(.26,.26),pm,0,1.44,-.185);bk.rotation.y=Math.PI;
+[-1,1].forEach(s=>M(new THREE.SphereGeometry(.09,10,8),sk,s*.31,1.64,0));
+U.A=[-1,1].map(s=>{const l=limb(g,s*.34,1.64,.3,.28,.055,sk,sk),h=new THREE.Mesh(new THREE.SphereGeometry(.055,10,8),sk);h.position.y=-.29;l.b.add(h);return l});
+U.L=[-1,1].map(s=>{const l=limb(g,s*.11,.98,.47,.46,.085,sk,sk),e=new THREE.Mesh(new THREE.BoxGeometry(.1,.07,.27),ST(0xf5f5f5,.5));e.position.set(0,-.49,.06);l.b.add(e);return l});
+U.r=new THREE.Mesh(new THREE.RingGeometry(.45,.58,28),new THREE.MeshBasicMaterial({color:rc,side:2,transparent:true,opacity:.85}));U.r.rotation.x=-Math.PI/2;g.add(U.r);
+const lb=new THREE.Sprite(new THREE.SpriteMaterial({map:cvs(128,64,(x)=>{x.fillStyle='rgba(0,0,0,.65)';x.fillRect(10,12,108,40);x.fillStyle=rc===0xffb703?'#ffb703':'#fff';x.font='bold 30px sans-serif';x.textAlign='center';x.fillText(pn,64,44)}),depthTest:false}));lb.scale.set(.8,.4,1);lb.position.y=2.35;g.add(lb);
+g.traverse(e=>{if(e.isMesh)e.castShadow=true});sc.add(g);return g}
+const OF=[1,7,23,4,34].map((n,i)=>mkP(n,POS[i],0x0e2f6e,'#ffffff',i,0xffb703)),DFN=[3,11,8,15,21].map((n,i)=>mkP(n,'D'+(i+1),0xb3122f,'#ffffff',i+2,0xff4d4d));
+function anim(g,x,z,tx,tz,dt,o){const v=g.userData;if(v.px==null){v.px=x;v.pz=z}const dx=x-v.px,dz=z-v.pz,sp=Math.min(Math.hypot(dx,dz)/Math.max(dt,.001),9);v.px=x;v.pz=z;v.sm+=(sp-v.sm)*.15;const spd=v.sm,tt=performance.now()/1000;
+const ds=(o.face||spd<.5)?Math.atan2(tx-x,tz-z):Math.atan2(dx,dz);let d=ds-v.ry;v.ry+=Math.atan2(Math.sin(d),Math.cos(d))*Math.min(1,dt*9);g.rotation.y=v.ry;v.ph+=spd*dt*(o.df?3:2.4);
+const run=cl(spd/3.2,0,1),st=o.df?1-cl((spd-4.8)/1.4,0,1):0,w=Math.sin(v.ph*2),idle=o.df?0:1-run,sh=o.sh;
+v.L.forEach((l,k)=>{const s=k?1:-1,sw=k?w:-w;l.r.rotation.x=(o.df?-.75*st+(1-st)*sw*.9:sw*.9*run-.1*idle)+(sh?-.3:0);l.m.rotation.x=(o.df?1.3*st+(1-st)*Math.max(0,-sw)*1.2:Math.max(0,-sw)*1.2*run+.2*idle)+(sh?.5:0);l.r.rotation.z=o.df?s*.24*st+Math.sin(v.ph*2+k*3.14)*.22*cl(spd/2.5,0,1)*st:0});
+v.A.forEach((a,k)=>{const s=k?1:-1,sw=k?-w:w;let rx=sw*.7*run+.1*idle,rz=0,mx=-.5-.5*run;
+if(o.df){rx=-.5*st+(1-st)*sw*.7;rz=s*(.95*st+Math.sin(tt*5+v.id+k)*.12*st);mx=-1.1*st-.5*(1-st)}
+if(o.dr>=0&&k){rx=-.4-.5*o.dr;mx=-.7-.4*o.dr}
+if(sh){rx=-2.8;mx=o.u>.4?-.15:-.5;rz=0}
+a.r.rotation.set(rx,0,rz);a.m.rotation.x=mx});
+const jmp=sh?Math.sin(Math.PI*cl(o.u,0,1))*.5:0;g.position.set(x,jmp-(o.df?.19*st:0)-.03*idle+(o.df?Math.sin(tt*6+v.id)*.012*st:0),z);v.r.position.y=.03-g.position.y}
+const bt=cvs(256,128,(x,w,h)=>{x.fillStyle='#cf6a1c';x.fillRect(0,0,w,h);x.strokeStyle='#1a0d05';x.lineWidth=3;[0,w/2,w].forEach(a=>{x.beginPath();x.moveTo(a,0);x.lineTo(a,h);x.stroke()});x.beginPath();x.moveTo(0,h/2);x.lineTo(w,h/2);x.stroke()});
+const bg=new THREE.Mesh(new THREE.SphereGeometry(.12,20,16),new THREE.MeshStandardMaterial({map:bt,roughness:.65}));bg.castShadow=true;sc.add(bg);
+const arw=new THREE.Mesh(new THREE.ConeGeometry(.13,.3,8),new THREE.MeshBasicMaterial({color:0xffb703}));arw.rotation.x=Math.PI;sc.add(arw);
+const hc=document.createElement('canvas');hc.width=56;hc.height=60;const hx=hc.getContext('2d'),ht=mkT(hc),hm=new THREE.Mesh(new THREE.PlaneGeometry(14,15),new THREE.MeshBasicMaterial({map:ht,transparent:true,depthWrite:false}));hm.rotation.x=-Math.PI/2;hm.position.set(7,.015,0);hm.visible=false;sc.add(hm);
+const bm2=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,6,16,1,true),new THREE.MeshBasicMaterial({color:0x35e07a,transparent:true,opacity:.3,depthWrite:false,side:2}));bm2.visible=false;sc.add(bm2);
+let bl=null,pa=null;const V=a=>new THREE.Vector3(a[0],.08,a[1]);
+function posAt(T){const st=S.p.steps,n=st.length-1;if(T>=n)return st[n].pos;const k=Math.floor(T),f=sm(T-k);return st[k].pos.map((a,i)=>{const b=st[k+1].pos[i];return[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]})}
+function ballAt(T){const st=S.p.steps,n=st.length-1,P=posAt(T);
+if(T>=n){const u=Math.min(T-n,1),h=P[st[n].ball-1],w=cl((T-n-1)/.25,0,1);let x=h[0]+(HX-h[0])*u,z=h[1]*(1-u),y=1.6+1.45*u+Math.sin(Math.PI*u)*2.2;if(w>0){y=3.05-w*(S.made?2.8:2.4);if(!S.made){x+=w*.9;z+=w*.6}}return[x,y,z]}
+const k=Math.floor(T),f=T-k,a=st[k].ball-1,b=st[k+1].ball-1;if(a===b){const p=P[a];return[p[0]+.3,.25+Math.abs(Math.sin(T*14))*.7,p[1]]}
+const pa=P[a],pb=P[b];return[pa[0]+(pb[0]-pa[0])*f,1.2+Math.sin(Math.PI*f)*.8,pa[1]+(pb[1]-pa[1])*f]}
+function paths(){const n=S.p.steps.length-1;if(bl)sc.remove(bl);if(pa)sc.remove(pa);const m=S.made;S.made=true;const a=[];for(let i=0;i<=120;i++){const q=ballAt(i/120*(n+1));a.push(V([q[0],q[2]]))}S.made=m;
+bl=new THREE.Line(new THREE.BufferGeometry().setFromPoints(a),new THREE.LineBasicMaterial({color:0xffa94d}));sc.add(bl);
+const b=[];for(let i=0;i<=80;i++)b.push(V(posAt(i/80*n)[S.sel-1]));pa=new THREE.Line(new THREE.BufferGeometry().setFromPoints(b),new THREE.LineBasicMaterial({color:0x3bc9db}));pa.visible=S.tab==='pos';sc.add(pa)}
+// camera
+const C={th:Math.PI/2,ph:1.12,r:21,tx:6.5,auto:0},CP={p:[Math.PI/2,1.12,21,6.5],t:[1.57,.02,24,7],s:[0,1.25,13,5],b:[3.14,1.2,13,6],c:[1.2,1.15,17,7]};
+function setCam(k){[C.th,C.ph,C.r,C.tx]=CP[k];C.auto=k==='c'}
+function camU(t){if(C.auto){C.th=1.57+Math.sin(t*.0002)*.7;C.tx+=(S.bx*.5+3.5-C.tx)*.03}cam.position.set(C.tx+C.r*Math.sin(C.ph)*Math.cos(C.th),C.r*Math.cos(C.ph),C.r*Math.sin(C.ph)*Math.sin(C.th));if(S.sh>0){cam.position.x+=(Math.random()-.5)*S.sh*.3;cam.position.y+=(Math.random()-.5)*S.sh*.3}cam.lookAt(C.tx,.8,0)}
+let dr=null;cv.onpointerdown=e=>{dr=[e.clientX,e.clientY];C.auto=0};addEventListener('pointerup',()=>dr=null);
+addEventListener('pointermove',e=>{if(!dr)return;C.th-=(e.clientX-dr[0])*.008;C.ph=cl(C.ph-(e.clientY-dr[1])*.006,.02,1.5);dr=[e.clientX,e.clientY]});
+cv.onwheel=e=>{e.preventDefault();C.r=cl(C.r+e.deltaY*.01,6,35)};
+function rs(){const w=cv.clientWidth,h=cv.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}new ResizeObserver(rs).observe(cv);
+// ---------- UI
+function metrics(){const st=S.p.steps,n=st.length-1;let bd=0,pas=0,pd=[0,0,0,0,0],tc=[0,0,0,0,0],pv=null;for(let i=0;i<=120;i++){const b=ballAt(i/120*n),q=[b[0],b[2]];if(pv)bd+=Math.hypot(q[0]-pv[0],q[1]-pv[1]);pv=q}
+st.forEach((s,k)=>{tc[s.ball-1]++;if(k&&s.ball!==st[k-1].ball)pas++;if(k)s.pos.forEach((p,i)=>pd[i]+=Math.hypot(p[0]-st[k-1].pos[i][0],p[1]-st[k-1].pos[i][1]))});S.m={bd,pa:pas,pd,tc}}
+function pickD(){S.d=S.df==='r'?DEFS[Math.random()*DEFS.length|0]:DEFS[+S.df];$('dn').innerHTML=`🛡 <b>${S.d.name}</b> (${LB[S.d.lg]}) — ${S.d.note}`}
+function fresh(){S.p=DB.find(p=>p.id===$('pl').value)||DB[0];S.T=0;S.made=null;S.D=null;S.fx=0;S.tr=1;pickD();S.rnd=S.rnd.map(()=>Math.random());S.ev=shot(S.p,S.d,S.rnd,S.lg);metrics();paths();tab()}
+function fill(){const op=p=>`<option value="${p.id}">${p.name} · ${LB[p.lg]}</option>`;$('pl').innerHTML='<optgroup label="แผนหลัก">'+DB.filter(p=>!p.id.startsWith('OB')).map(op).join('')+'</optgroup><optgroup label="Off-ball (ไม่มีบอล)">'+DB.filter(p=>p.id.startsWith('OB')).map(op).join('')+'</optgroup>';$('df').innerHTML=DEFS.map((d,i)=>`<option value="${i}">${d.name} · ${LB[d.lg]}</option>`).join('')+'<option value="r">🎲 สุ่มแผนรับ</option>'}
+function role(i){const L=S.p.steps[S.p.steps.length-1];return L.ball===i+1?'ผู้จบเกม':S.m.tc[i]?'ผู้จ่าย/ผู้เล่นบอล':S.m.pd[i]>4?'คัตไม่มีบอล ดึงดีเฟนส์':'สเปซซิ่ง/ตั้งสกรีน'}
+function tab(){const p=S.p,t=S.tab,el=$('tab');pa&&(pa.visible=t==='pos');S.ci=-1;
+if(t==='ball')el.innerHTML=`<p class="mut">${p.kind} · ${p.tags.map(x=>TN[x]).join(', ')}</p><div class="kpi"><div><b>${S.m.pa}</b>จำนวนจ่าย</div><div><b>${S.m.bd.toFixed(1)} ม.</b>ระยะบอล</div><div><b>${p.steps.length}</b>จังหวะ</div></div>`+p.steps.map((s,i)=>`<div class="st" data-i="${i}"><b>${i+1}</b> <span class="tag">${POS[s.ball-1]}</span> ${s.note}</div>`).join('');
+else if(t==='pos'){const i=S.sel-1,L=p.steps[p.steps.length-1],D=defT(S.d,L.pos,L.pos[L.ball-1],MID,L.ball-1),o=Math.min(...D.map(q=>Math.hypot(q[0]-L.pos[i][0],q[1]-L.pos[i][1])));
+el.innerHTML=`<div class="row">${POS.map((n,k)=>`<button data-s="${k+1}" class="${k===i?'on':''}">${k+1} ${n}</button>`).join('')}</div><p><b>${POS[i]}</b> — ${ROLE[i]}</p><div class="kpi"><div><b>${S.m.pd[i].toFixed(1)} ม.</b>ระยะเคลื่อนที่</div><div><b>${S.m.tc[i]}</b>จังหวะถือบอล</div><div><b>${o.toFixed(1)} ม.</b>ระยะเปิดตอนจบ</div></div><p>บทบาท: <span class="tag">${role(i)}</span></p><p class="mut">${S.m.tc[i]?'มีบอล: ไดรฟ์ ชะลอจังหวะ ดึงช่วยแล้วจ่าย':'ไม่มีบอล: คัต สกรีน ตัดมุมดีเฟนส์ ปรับระยะให้เปิดก่อนรับ'} · เส้นฟ้า = เส้นทางผู้เล่น</p>`}
+else if(t==='eff'){const e=S.ev,L=p.steps[p.steps.length-1].pos,sp=L.map((a,i)=>Math.min(...L.filter((_,j)=>j!==i).map(b=>Math.hypot(a[0]-b[0],a[1]-b[1])))).reduce((a,b)=>a+b)/5,
+rk=DEFS.map(d=>[d,shot(p,d,MID,S.lg)]).sort((a,b)=>b[1].ep-a[1].ep),row=([d,v])=>`<div>${d.name} · ${v.ep.toFixed(2)}</div><div class="br"><i style="width:${v.ep/1.9*100}%"></i></div>`;
+el.innerHTML=`<p><span class="tag">${p.kind}</span> ผู้ยิง ${POS[e.sh-1]} · ${e.th?'3 แต้ม':'2 แต้ม'} · ${e.dist.toFixed(1)} ม.</p><div class="kpi"><div><b>${e.p*100|0}%</b>โอกาสเข้า</div><div><b>${e.ep.toFixed(2)}</b>คะแนนคาดหวัง</div><div><b>${sp.toFixed(1)} ม.</b>สเปซซิ่ง</div></div><p class="mut">ผู้ป้องกันใกล้สุด ${e.d.toFixed(1)} ม. · ${e.ep>=1.2?'ยอดเยี่ยม':e.ep>=1?'ดี':'ควรปรับแผน'}</p><b>แผนรับที่โดนแผนนี้เล่นงานง่ายสุด</b>${rk.slice(0,3).map(row).join('')}<b>แผนรับที่หยุดแผนนี้ได้ดีสุด</b>${rk.slice(-3).reverse().map(row).join('')}<div class="row"><button id="sim">⚙ จำลอง 300 ครั้ง (สุ่มแผนรับ)</button></div><div id="so" class="mut"></div>`;
+$('sim').onclick=()=>{let pt=0,mk=0;for(let i=0;i<300;i++){const v=shot(p,DEFS[Math.random()*30|0],S.rnd.map(Math.random),S.lg);if(Math.random()<v.p){mk++;pt+=v.pt}}$('so').textContent=`เข้า ${mk}/300 (${(mk/3).toFixed(0)}%) · เฉลี่ย ${(pt/300).toFixed(2)} แต้ม/ครั้ง`}}
+else{const D=S.d,rk=DB.map(q=>{const e=shot(q,D,MID,S.lg),m=q.tags.filter(x=>D.beats.includes(x));return{q,e,m,s:e.ep+.15*m.length}}).sort((a,b)=>b.s-a.s).slice(0,6);
+el.innerHTML=`<p><b>${D.name}</b> (${LB[D.lg]}) — ${D.note}</p><p class="mut">โดนเล่นงานด้วย: ${D.beats.map(x=>TN[x]).join(', ')}</p><b>เจอแผนรับนี้ ควรใช้:</b>`+rk.map(r=>`<div class="st" data-p="${r.q.id}" style="cursor:pointer"><b>${r.q.name}</b> · EP ${r.e.ep.toFixed(2)}<br><span class="mut">${r.m.map(x=>TN[x]).join(' · ')||'ได้เปรียบจากระยะยิง'}</span></div>`).join('')}}
+$('lg').onchange=e=>{S.lg=e.target.value;arc();fresh()};$('pl').onchange=fresh;$('df').onchange=e=>{S.df=e.target.value;fresh()};
+const PP=on=>{S.play=on;$('pp').textContent=on?'⏸ หยุด':'▶ เล่น';$('pp').classList.toggle('on',on)};
+$('pp').onclick=()=>{if(S.T>=S.Tm){S.T=0;S.made=null;S.fx=0}PP(!S.play)};$('rs').onclick=()=>{S.T=0;S.made=null;S.D=null;S.fx=0;S.tr=1;PP(true)};
+$('rnd').onclick=()=>{$('pl').value=DB[Math.random()*DB.length|0].id;S.df='r';$('df').value='r';fresh();PP(true)};
+$('sp').onchange=e=>S.sp=+e.target.value;$('sl').oninput=e=>{S.T=e.target.value/100*S.Tm;PP(false);S.fx=0;if(S.T<S.p.steps.length-1)S.made=null};
+document.querySelectorAll('[data-cam]').forEach(b=>b.onclick=()=>setCam(b.dataset.cam));
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;document.querySelectorAll('[data-t]').forEach(x=>x.classList.toggle('on',x===b));tab()});
+$('tab').onclick=e=>{const b=e.target.closest('[data-s]'),q=e.target.closest('[data-p]');if(b){S.sel=+b.dataset.s;paths();tab()}if(q){$('pl').value=q.dataset.p;fresh();PP(true)}};
+function load(u){const base=parse(CSV).concat(GEN);DB=u?base.filter(p=>!u.some(x=>x.id===p.id)).concat(u):base;fill();fresh()}
+$('ld').onclick=()=>{const d=parse($('csv').value);d.length?load(d):alert('รูปแบบ CSV ไม่ถูกต้อง')};$('fi').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>{$('csv').value=t;const d=parse(t);d.length&&load(d)})};
+// ---------- defender AI + heatmap + loop
+const OV=[0,1,2,3,4].map(()=>({x:0,z:0,s:0,px:null,pz:null}));
+const U2=(a,c)=>{const l=Math.hypot(c[0]-a[0],c[1]-a[1])||1;return[(c[0]-a[0])/l,(c[1]-a[1])/l]};
+function dTargets(P,b,hi){const H=P[hi],bk=[HX,0],d=S.d,sw=/Switch|Peel/.test(d.name),hd=/Hedge|Blitz|Trap/.test(d.name),dr=/Drop/.test(d.name),asg=[0,1,2,3,4];let scr=-1;
+for(let j=0;j<5;j++)if(j!==hi&&Math.hypot(P[j][0]-H[0],P[j][1]-H[1])<1.7&&OV[hi].s>.3&&OV[j].s<1.2)scr=j;
+if(scr>=0&&sw){asg[hi]=scr;asg[scr]=hi}
+const F=[],T=d.a.map((t,i)=>{if(t[0]==='M'){const m=asg[i],o=P[m],g=parseFloat(t.slice(1)),ub=U2(o,bk),uh=U2(o,H),dh=Math.hypot(o[0]-H[0],o[1]-H[1]),uH=U2(H,bk);F[i]=m===hi?H:[(o[0]+H[0])/2,(o[1]+H[1])/2];
+if(m===hi){if(scr>=0&&!sw){const v=[OV[hi].x,OV[hi].z],l=Math.hypot(v[0],v[1])||1;return[o[0]-v[0]/l*.9+ub[0]*.3,o[1]-v[1]/l*.9+ub[1]*.3]}const gx=.75+g*.3;return[o[0]+ub[0]*gx,o[1]+ub[1]*gx-Math.sign(o[1]||1)*.3]}
+if(m===scr&&!sw){if(hd)return[H[0]+uH[0]*1.5,H[1]+uH[1]*1.5];if(dr)return[H[0]+uH[0]*3.2,H[1]*.5];return[o[0]+(H[0]-o[0])*.4,o[1]+(H[1]-o[1])*.4]}
+if(dh<6.5){const k=cl(1.5-g*.5,.4,1.2);return[o[0]+uh[0]*k+ub[0]*.4,o[1]+uh[1]*k+ub[1]*.4]}
+const gp=Math.max(g,.8)+.5,x=o[0]+ub[0]*gp,z=o[1]+ub[1]*gp;return[x+(4.2-x)*.3,z+(H[1]*.2-z)*.3]}
+const a=SP[t];F[i]=H;let x=a[0]+(H[0]-a[0])*.22,z=a[1]+(H[1]-a[1])*.3,bj=-1,bd=2.4;P.forEach((q,j)=>{const e=Math.hypot(q[0]-x,q[1]-z);if(e<bd){bd=e;bj=j}});if(bj>=0){x+=(P[bj][0]-x)*.45;z+=(P[bj][1]-z)*.45}
+if(S.lg==='NBA'&&x<5.8&&Math.abs(z)<2.45)z=(H[1]>=0?1:-1)*2.7;return[x,z]});
+let zi=-1,zd=4.5;d.a.forEach((t,i)=>{if(t[0]!=='M'){const e=Math.hypot(T[i][0]-H[0],T[i][1]-H[1]);if(e<zd){zd=e;zi=i}}});if(zi>=0){const q=U2(H,bk);T[zi]=[H[0]+q[0],H[1]+q[1]]}
+T.forEach(q=>{q[0]=cl(q[0],.4,13.6);q[1]=cl(q[1],-7.2,7.2)});let gi=0,gd=99;T.forEach((q,i)=>{const e=Math.hypot(q[0]-H[0],q[1]-H[1]);if(e<gd){gd=e;gi=i}});return{T,F,gi}}
+function epAt(x,z){const dist=Math.hypot(x-HX,z),[r,zc]=ARC[S.lg],th=dist>r||(Math.abs(z)>=zc+.05&&x<4.4);let o=9;for(const q of S.D)o=Math.min(o,Math.hypot(q.x-x,q.z-z));return cl((th?.36:dist<2.5?.62:.42)+cl((o-1.2)*.06,-.1,.16),.1,.8)*(th?3:2)}
+function heatU(P,hi){const im=hx.createImageData(56,60),k=S.sel-1!==hi?S.sel-1:(hi+1)%5;let bs=null;
+for(let j=0;j<60;j++)for(let i=0;i<56;i++){const x=(i+.5)*.25,z=-7.5+(j+.5)*.25,ep=x<1.2?0:epAt(x,z),f=cl((ep-.6)/.8,0,1),o=(j*56+i)*4;im.data.set([f<.5?255:510*(1-f),f<.5?510*f:255,40,ep?125:0],o);
+const d=Math.hypot(x-P[k][0],z-P[k][1]);if(ep&&d<4.5){const s=ep-.04*d;if(!bs||s>bs.s)bs={s,x,z,ep}}}
+hx.putImageData(im,0,0);ht.needsUpdate=true;if(bs){bm2.position.set(bs.x,3,bs.z);$('bs').textContent=`📍 ช่องว่างดีที่สุดของ ${POS[k]}: ${SP_N(bs.x,bs.z)} · EP ${bs.ep.toFixed(2)} (คัต/ย้ายไปจุดที่ผู้ป้องกันไกลและอยู่ในระยะยิงดี)`}}
+function SP_N(x,z){let b='',bd=99;for(const k in SP){const e=Math.hypot(SP[k][0]-x,SP[k][1]-z);if(e<bd){bd=e;b=SP[k][2]}}return b+` (${x.toFixed(1)},${z.toFixed(1)})`}
+const fmt=s=>{s=Math.max(0,s);return(s/60|0)+':'+String(s%60|0).padStart(2,'0')};
+let last=0,hacc=0;S.gc=480;S.sc=[0,0];
+function frame(t){requestAnimationFrame(frame);const dt=Math.min((t-last)/1000,.05)||.016;last=t;const p=S.p,st=p.steps,n=st.length-1;S.Tm=n+1.25;
+if(S.play){S.T+=dt*S.sp*.7;if(S.T>=S.Tm){S.T=S.Tm;PP(false);S.gc-=14}$('sl').value=S.T/S.Tm*100}
+if(S.T>=n&&S.made==null)S.made=Math.random()<S.ev.p;
+const P=posAt(S.T),b=ballAt(S.T);S.bx=b[0];const k0=Math.min(Math.floor(S.T),n-1),hi=S.T>=n?st[n].ball-1:(S.T%1>.5?st[k0+1]:st[k0]).ball-1,shp=S.T>=n&&S.T<n+.6,u=Math.min((S.T-n)/.6,1),drib=S.T<n&&st[k0].ball===st[k0+1].ball;
+OV.forEach((q,j)=>{if(q.px==null){q.px=P[j][0];q.pz=P[j][1]}q.x+=((P[j][0]-q.px)/dt-q.x)*.3;q.z+=((P[j][1]-q.pz)/dt-q.z)*.3;q.px=P[j][0];q.pz=P[j][1];q.s=Math.hypot(q.x,q.z)});
+const dm=dTargets(P,b,hi),ds=dt*(S.play?S.sp:1);
+if(!S.D)S.D=dm.T.map((q,i)=>({x:q[0],z:q[1],vx:0,vz:0,fx:q[0],fz:q[1],tau:.1+S.rnd[i]*.12}));
+S.D.forEach((q,i)=>{const T=dm.T[i],a=1-Math.exp(-ds/q.tau);q.fx+=(T[0]-q.fx)*a;q.fz+=(T[1]-q.fz)*a;const ex=q.fx-q.x,ez=q.fz-q.z,di=Math.hypot(ex,ez),s=Math.min(di>2.5?6.4:4.2,di*6);let ax=(di>.02?ex/di*s:0)-q.vx,az=(di>.02?ez/di*s:0)-q.vz;const al=Math.hypot(ax,az),mx=16*ds;if(al>mx){ax*=mx/al;az*=mx/al}q.vx+=ax;q.vz+=az;q.x+=q.vx*ds;q.z+=q.vz*ds});
+S.D.forEach((q,i)=>{const sp=(x,z,m)=>{const e=Math.hypot(q.x-x,q.z-z);if(e<m&&e>.001){q.x+=(q.x-x)/e*(m-e)*.5;q.z+=(q.z-z)/e*(m-e)*.5}};S.D.forEach((r,j)=>{if(j!==i)sp(r.x,r.z,.6)});P.forEach(o=>sp(o[0],o[1],.5))});
+OF.forEach((o,i)=>{anim(o,P[i][0],P[i][1],b[0],b[2],dt,{sh:shp&&i===hi,u,dr:i===hi&&drib?Math.abs(Math.sin(S.T*14)):-1});o.userData.r.visible=i===hi||(S.tab==='pos'&&S.sel-1===i);o.userData.r.material.color.set(i===hi?0xffb703:0x3bc9db)});
+DFN.forEach((d,i)=>{anim(d,S.D[i].x,S.D[i].z,dm.F[i][0],dm.F[i][1],dt,{df:1,face:1,sh:shp&&i===dm.gi,u});d.userData.r.visible=false});
+bg.position.set(b[0],b[1],b[2]);bg.rotation.x+=dt*5;arw.position.set(P[hi][0],2.75+Math.sin(t*.006)*.08,P[hi][1]);
+if(S.made&&S.T>n+1)net.scale.y=1+.35*Math.sin((S.T-n-1)*30)*Math.max(0,1-(S.T-n-1)*4);else net.scale.y=1;
+if(S.T>n+1&&!S.fx){S.fx=1;if(S.made){S.sc[0]+=S.ev.pt;S.sh=1}$('res').className='res pop';$('res').textContent=S.made?`BUCKET! +${S.ev.pt}`:'MISS'}if(S.T<n+1)$('res').textContent='';
+$('s0').textContent=S.sc[0];$('s1').textContent=S.sc[1];$('gc').textContent=fmt(S.gc-S.T*4.5);$('shc').textContent=Math.max(0,24-S.T*4.5).toFixed(1);
+if(S.heat){hacc+=dt;if(hacc>.25){hacc=0;heatU(P,hi)}}
+S.sh=Math.max(0,S.sh-dt*2.5);
+const ci=Math.min(Math.round(S.T),n);if(ci!==S.ci){S.ci=ci;$('note').textContent=`จังหวะ ${ci+1}/${n+1}: ${st[ci].note} · ${S.d.name}`;document.querySelectorAll('.st[data-i]').forEach(e=>e.classList.toggle('cur',+e.dataset.i===ci))}
+camU(t);R.render(sc,cam)}
+$('ht').onclick=()=>{S.heat=!S.heat;hm.visible=bm2.visible=S.heat;$('ht').classList.toggle('on',S.heat);if(!S.heat)$('bs').textContent=''};
+$('csv').value=CSV;court();setCam('p');rs();load();requestAnimationFrame(frame);
+</script></body></html>
